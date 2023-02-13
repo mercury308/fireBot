@@ -1,63 +1,49 @@
 #include <Servo.h>
-char buffer[11];
-Servo motor1;
-Servo motor2; 
-void setup()
-{
-  motor1.attach(5); 
-  motor2.attach(6); 
-  Serial.begin(9600);
+Servo motorOne;
+Servo motorTwo;
+int x_key = A1;                                               
+int y_key = A0;                                               
+int x_pos;
+int y_pos;
+int motorOne_pin = 8;
+int motorTwo_pin = 9;  
+int initial_position = 90;
+int initial_position1 = 90;
 
-  while(Serial.available())
-    Serial.read();
-    motor1.write(90); 
-    motor2.write(90); 
-    Serial.println("INITIALIZING...");
+void setup () {
+Serial.begin (9600);
+motorOne.attach (motorOne_pin ); 
+motorTwo.attach (motorTwo_pin ); 
+motorOne.write (initial_position);
+motorTwo.write (initial_position1);
+pinMode (x_key, INPUT);                     
+pinMode (y_key, INPUT);                      
 }
+void loop () {
+x_pos = analogRead (x_key);  
+y_pos = analogRead (y_key);                      
 
-void loop(){
-  if (Serial.available() > 0){
-    int index = 0;
-    delay(100); 
-    int numChar = Serial.available(); 
-  if (numChar>10) {
-    numChar=10;
-  }
-  while (numChar--) {
-    buffer[index++] = Serial.read();
-  }
-  buffer[index]='\0';
-  splitString(buffer);
-  }
+if (x_pos < 300){
+if (initial_position < 10) { } else{ initial_position = initial_position - 20; motorOne.write ( initial_position ) ; delay (100) ; } } if (x_pos > 700){
+if (initial_position > 180)
+{  
+}  
+else{
+initial_position = initial_position + 20;
+motorOne.write ( initial_position ) ;
+delay (100) ;
 }
-
-void splitString(char* data) {
-  
-  Serial.print("Data entered: ");
-  Serial.println(data);
-  char* parameter;
-  parameter = strtok (data, " ,");
-
-  while (parameter != NULL) { 
-    setServo(parameter); 
-    parameter = strtok (NULL, " ,");
-  }
-  while(Serial.available())
-  Serial.read();
 }
-void setServo(char* data) {
-  if ((data[0] == 'L') || (data[0] == 'l')) {
-    int firstVal = strtol(data+1, NULL, 10); 
-    firstVal = constrain(firstVal,0,180); 
-    motor1.write(firstVal);
-    Serial.print("Motor1 is set to: ");
-    Serial.println(firstVal);
-  }
-  if ((data[0] == 'R') || (data[0] == 'r')) {
-  int secondVal = strtol(data+1, NULL, 10); 
-  secondVal = constrain(secondVal,0,255); 
-  motor2.write(secondVal);
-  Serial.print("Motor2 is set to: ");
-  Serial.println(secondVal);
-  }
+if (y_pos < 300){
+if (initial_position1 < 10) { } else{ initial_position1 = initial_position1 - 20; servo2.write ( initial_position1 ) ; delay (100) ; } } if (y_pos > 700){
+if (initial_position1 > 180)
+{  
+}        
+else{
+initial_position1 = initial_position1 + 20;
+motorTwo.write (initial_position1) ;
+delay (100) ;
 }
+}
+}
+ 
