@@ -1,7 +1,8 @@
 // heat sensor {ky-026}
+#include <LiquidCrystal.h>
 // LCD display {standard}
-
 //test.ino
+
 int led = 13; // define the LED pin
 int digitalPin = 2; // KY-026 digital interface
 int analogPin = A0; // KY-026 analog interface
@@ -22,7 +23,7 @@ void loop()
   {
     digitalWrite(led, HIGH); // turn ON Arduino's LED
   }
-  else
+  elset
   {
     digitalWrite(led, LOW); // turn OFF Arduino's LED
   }
@@ -30,4 +31,13 @@ void loop()
   analogVal = analogRead(analogPin); 
   Serial.println(analogVal); // print analog value to serial
   delay(100);
+}
+void setup() {
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
+  lcd.print(analogVal);
+}
+void loop() {
+  lcd.display();
+  delay(500);
 }
