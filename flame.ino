@@ -1,43 +1,44 @@
-// heat sensor {ky-026}
-#include <LiquidCrystal.h>
-// LCD display {standard}
-//test.ino
+#include <Servo.h>
 
-int led = 13; // define the LED pin
-int digitalPin = 2; // KY-026 digital interface
-int analogPin = A0; // KY-026 analog interface
-int digitalVal; // digital readings
-int analogVal; //analog readings
-void setup()
-{
-  pinMode(led, OUTPUT);
-  pinMode(digitalPin, INPUT);
-  //pinMode(analogPin, OUTPUT);
-  Serial.begin(9600);
-}
-void loop()
-{
-  // Read the digital interface
-  digitalVal = digitalRead(digitalPin); 
-  if(digitalVal == HIGH) // if flame is detected
-  {
-    digitalWrite(led, HIGH); // turn ON Arduino's LED
-  }
-  elset
-  {
-    digitalWrite(led, LOW); // turn OFF Arduino's LED
-  }
-  // Read the analog interface
-  analogVal = analogRead(analogPin); 
-  Serial.println(analogVal); // print analog value to serial
-  delay(100);
-}
+// Define pin numbers
+const int flamePin = 2;          // Connect KY-026 flame sensor to digital pin 2
+const int leftMotorPin = 3;      // Connect left motor to digital pin 3
+const int rightMotorPin = 4;     // Connect right motor to digital pin 4
+
+Servo leftMotor;                 // Create left motor object
+Servo rightMotor;                // Create right motor object
+
 void setup() {
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  lcd.print(analogVal);
+  pinMode(flamePin, INPUT);      // Set flamePin as input
+  leftMotor.attach(leftMotorPin);// Attach left motor to leftMotorPin
+  rightMotor.attach(rightMotorPin); // Attach right motor to rightMotorPin
+  Serial.begin(9600);            // Start serial communication
 }
+
 void loop() {
-  lcd.display();
-  delay(500);
+  // Read flame sensor value
+  int flameValue = digitalRead(flamePin);
+
+  // If flame is detected, move forward, otherwise stop
+  if (flameValue == HIGH) {
+    Serial.println("Flame detected!");
+    moveForward();
+  }
+  else {
+    stopMotors();
+  }
+
+  delay(100); // Delay for 100 milliseconds
+}
+
+// Function to move the robot forward
+void moveForward() {
+  leftMotor.write(180);          // Set left motor to maximum speed forward
+  rightMotor.write(180);          // Set right motor to maximum speed forward
+}
+
+// Function to stop the robot
+void stopMotors() {
+  leftMotor.write(0);          // Set left motor to stop
+  rightMotor.write(0);         // Set right motor to stop
 }
