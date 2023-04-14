@@ -1,9 +1,12 @@
 #include <Servo.h>
 #include <LiquidCrystal.h>
+
 // Define pin numbers
 const int flamePin = 2;          // Connect KY-026 flame sensor to digital pin 2
 const int leftMotorPin = 3;      // Connect left motor to digital pin 3
 const int rightMotorPin = 4;     // Connect right motor to digital pin 4
+const int trigPin = 9; // Trigger pin of ultrasonic sensor
+const int echoPin = 10; // Echo pin of ultrasonic sensor
 const int rs = 12, en = 11, d4 = 5, d5 = 6, d6 = 7, d7 = 8; // Connect LCD display to digital pins 5-12
 
 // Define wheel parameters
@@ -73,8 +76,6 @@ void stopMotors() {
   leftMotor.write(0);          // Set left motor to stop
   rightMotor.write(0);         // Set right motor to stop
 }
-
-// Function to update the odometry
 void updateOdometry() {
   // Calculate distance traveled by each wheel since the last update
   float leftTicks = leftMotor.read() / 180.0 * ticksPerRevolution;
@@ -89,4 +90,56 @@ void updateOdometry() {
   // Calculate distance traveled by the robot since the last update
   float distanceDelta = (leftDistanceDelta + rightDistanceDelta) / 2.0;
   float thetaDelta = (rightDistanceDelta - leftDistanceDelta) / 2.0;
+
+  // Update odometry variables
+  leftDistance += leftDistanceDelta;
+  rightDistance += rightDistanceDelta;
+  x += distanceDelta * cos(theta);
+  y += distanceDelta * sin(theta);
+  theta += thetaDelta;
+
+  // Check for obstacles and adjust position accordingly
+  if (distanceDelta > 0) {
+    float frontDistance = readUltrasonicSensor();
+    if (frontDistance < MIN_FRONT_DISTANCE) {
+      // Obstacle detected - move robot back and rotate left
+      moveBackward();
+      delay(500);
+      rotateLeft();
+      delay(1000);
+      stopMotors();
+    }
+  }
+}
+
+// Function to read the distance from the ultrasonic sensor
+float readUltrasonicSensor() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Measure the duration of the echo pulse in microseconds
+  long duration = pulseIn(echoPin, HIGH);
+
+  // Calculate the distance based on the duration of the echo pulse
+  float distance = duration * 0.034 / 2.0; // Distance in centimeters
+  return distance;
+}
+
+// Function to move the robot backward
+void moveBackward() {
+  leftMotor.write(0);          // Set left motor to maximum speed backward
+  rightMotor.write(0);         // Set right motor to maximum speed backward
+}
+
+// Function to rotate the robot left
+void rotateLeft() {
+  leftMotor.write(0);          // Set left motor to maximum speed backward
+  rightMotor.write(90);       // Set right motor to half speed forward
+}
+void rotateRight() {
+  leftMotor.write(90); //Set left motor to maximum speed forward
+  rightMotor.write(0); //Set right motor to half speed backward
 }
