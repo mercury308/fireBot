@@ -10,9 +10,11 @@ const int echoPin = 10; // Echo pin of ultrasonic sensor
 const int rs = 12, en = 11, d4 = 5, d5 = 6, d6 = 7, d7 = 8; // Connect LCD display to digital pins 5-12
 
 // Define wheel parameters
-const float wheelDiameter = 6.5; // Diameter of the wheels in centimeters
+const float wheelDiameter = 10.4; // Diameter of the wheels in centimeters
 const float wheelCircumference = wheelDiameter * PI; // Circumference of the wheels in centimeters
 const int ticksPerRevolution = 20; // Number of encoder ticks per wheel revolution
+// Define obstacle avoidance parameters
+const float minFrontDistance = 10.0; // Minimum distance from an obstacle in centimeters
 
 Servo leftMotor;                 // Create left motor object
 Servo rightMotor;                // Create right motor object
@@ -70,22 +72,6 @@ void moveForward() {
   leftMotor.write(180);          // Set left motor to maximum speed forward
   rightMotor.write(180);          // Set right motor to maximum speed forward
 }
-// Function to move the robot backward
-void moveBackward() {
-  leftMotor.write(0);          // Set left motor to maximum speed backward
-  rightMotor.write(0);         // Set right motor to maximum speed backward
-}
-
-// Function to rotate the robot left
-void rotateLeft() {
-  leftMotor.write(0);          // Set left motor to maximum speed backward
-  rightMotor.write(90);       // Set right motor to half speed forward
-}
-// Function to rotate the robot right
-void rotateRight() {
-  leftMotor.write(90); //Set left motor to maximum speed forward
-  rightMotor.write(0); //Set right motor to half speed backward
-}
 
 // Function to stop the robot
 void stopMotors() {
@@ -117,7 +103,7 @@ void updateOdometry() {
   // Check for obstacles and adjust position accordingly
   if (distanceDelta > 0) {
     float frontDistance = readUltrasonicSensor();
-    if (frontDistance < MIN_FRONT_DISTANCE) {
+    if (frontDistance < minFrontDistance) {
       // Obstacle detected - move robot back and rotate left
       moveBackward();
       delay(500);
@@ -142,4 +128,20 @@ float readUltrasonicSensor() {
   // Calculate the distance based on the duration of the echo pulse
   float distance = duration * 0.034 / 2.0; // Distance in centimeters
   return distance;
+}
+
+// Function to move the robot backward
+void moveBackward() {
+  leftMotor.write(-180);          // Set left motor to neutral speed backward
+  rightMotor.write(-180);         // Set right motor to maximum speed backward
+}
+
+// Function to rotate the robot left
+void rotateLeft() {
+  leftMotor.write(0);          // Set left motor to neutral speed backward
+  rightMotor.write(90);       // Set right motor to half speed forward
+}
+void rotateRight() {
+  leftMotor.write(90); //Set left motor to maximum speed forward
+  rightMotor.write(0); //Set right motor to half speed backward
 }
