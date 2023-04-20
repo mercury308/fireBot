@@ -1,0 +1,17 @@
+//if all goes wrong
+// EMERGENCY FUNCTION (#>-<#)> x1
+//void updateOdometry() {
+  // Calculate distance traveled by each wheel since the last update
+  //float leftTicks = leftMotor.read() / 180.0 * ticksPerRevolution;
+  //float rightTicks = rightMotor.read() / 180.0 * ticksPerRevolution;
+  //float leftDistanceDelta = leftTicks / ticksPerRevolution * wheelCircumference;
+  //float rightDistanceDelta = rightTicks / ticksPerRevolution * wheelCircumference;
+
+  // Reset motor positions
+  //leftMotor.write(0);
+  //rightMotor.write(0);
+
+  // Calculate distance traveled by the robot since the last update
+  //float distanceDelta = (leftDistanceDelta + rightDistanceDelta) / 2.0;
+  //float thetaDelta = (rightDistanceDelta - leftDistanceDelta) / 2.0;
+//}
